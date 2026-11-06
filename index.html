@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LoomiValues - Loomian Legacy W/F/L Calculator & Trade Center</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--txt:#1a202c;--mut:#64748b;--acc:#3b82f6;--bdr:#e2e8f0;--win:#10b981;--fair:#f59e0b;--lose:#ef4444;--alp:#f97316;--gam:#06b6d4;--sa:#22c55e}
+[data-theme="dark"]{--bg:#0f172a;--card:#1e293b;--txt:#f8fafc;--mut:#94a3b8;--acc:#60a5fa;--bdr:#334155}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,Arial,sans-serif}
+body{background:var(--bg);color:var(--txt);transition:.2s;line-height:1.45}
+header{background:var(--card);border-bottom:1px solid var(--bdr);padding:.8rem 5%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:.5rem}
+.logo{font-size:1.45rem;font-weight:800;color:var(--acc);text-decoration:none}.logo span{color:var(--txt)}
+nav{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}nav a{text-decoration:none;color:var(--txt);font-weight:600;font-size:.9rem}
+.btn{background:var(--acc);color:#fff;border:none;padding:.45rem .85rem;border-radius:8px;cursor:pointer;font-weight:600;font-size:.84rem}
+.btn-win{background:var(--win)}.btn-lose{background:var(--lose)}.btn-out{background:transparent;color:var(--txt);border:1px solid var(--bdr)}
+.acc-pill{display:flex;align-items:center;gap:.45rem;background:var(--bg);border:1px solid var(--bdr);padding:.3rem .7rem;border-radius:999px;font-size:.8rem;font-weight:700}
+.rbx-ok{background:rgba(16,185,129,.15);color:var(--win);padding:1px 6px;border-radius:5px;font-size:.72rem}
+.rbx-no{background:rgba(245,158,11,.15);color:var(--fair);padding:1px 6px;border-radius:5px;font-size:.7rem}
+.wrap{max-width:1160px;margin:1.3rem auto;padding:0 1.2rem}
+.banner{background:var(--card);border:1px solid var(--bdr);border-left:5px solid var(--acc);padding:.75rem 1.1rem;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:1.3rem;font-size:.9rem}
+.badge{background:var(--acc);color:#fff;font-size:.7rem;padding:.15rem .55rem;border-radius:999px;font-weight:700;text-transform:uppercase}
+.center{text-align:center;margin-bottom:1rem}.center h1{font-size:1.75rem}.center p{color:var(--mut);font-size:.9rem}
+.wfl-box{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.1rem;text-align:center;margin-bottom:1.3rem}
+.wfl-res{font-size:1.45rem;font-weight:800}.track{width:100%;height:11px;background:var(--bdr);border-radius:999px;overflow:hidden;display:flex;margin:.65rem 0}
+.bar-y{background:var(--acc);width:50%;transition:.3s}.bar-t{background:var(--win);width:50%;transition:.3s}
+.post-row{display:flex;justify-content:center;align-items:center;gap:.65rem;margin-top:.85rem;padding-top:.8rem;border-top:1px solid var(--bdr);flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem}
+.box{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.15rem}
+.box-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem;padding-bottom:.6rem;border-bottom:1px solid var(--bdr)}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem}
+.slot{border:2px dashed var(--bdr);border-radius:10px;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.45rem;text-align:center;cursor:pointer;position:relative}
+.slot:hover{border-color:var(--acc)}.slot.filled{border-style:solid;border-color:var(--acc);background:rgba(59,130,246,.06)}
+.s-title{font-weight:700;font-size:.82rem}.s-tags{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;margin-top:3px}
+.pill{font-size:.62rem;font-weight:700;padding:1px 5px;border-radius:4px;color:#fff}
+.p-alp{background:var(--alp)}.p-gam{background:var(--gam)}.p-sa{background:var(--sa)}.p-pur{background:#8b5cf6}.p-nrm{background:var(--mut)}
+.p-wm{background:#3b82f6}.p-wp{background:#ec4899}.p-ww{background:#e2e8f0;color:#0f172a;border:1px solid #94a3b8}
+.p-rw{background:linear-gradient(90deg,#ef4444,#f59e0b,#10b981,#3b82f6,#8b5cf6)}
+.s-val{font-size:.76rem;font-weight:700;color:var(--acc);margin-top:3px}
+.rm{position:absolute;top:3px;right:5px;background:var(--lose);color:#fff;border:none;border-radius:50%;width:17px;height:17px;font-size:.68rem;cursor:pointer}
+.tc-hd{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem}
+.tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem}
+.tc-card{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1rem}
+.tc-top,.tc-ft{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;font-size:.82rem}
+.tc-top{padding-bottom:.55rem;margin-bottom:.7rem;border-bottom:1px solid var(--bdr)}
+.tc-ft{padding-top:.55rem;margin-top:.7rem;border-top:1px solid var(--bdr)}
+.tc-sides{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+.tc-side{background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:.55rem}
+.tc-lbl{font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--mut);margin-bottom:.35rem;display:flex;justify-content:space-between}
+.tc-item{background:var(--card);border:1px solid var(--bdr);border-radius:5px;padding:.3rem .45rem;font-size:.76rem;margin-bottom:.3rem}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:200}
+.modal{background:var(--card);border-radius:14px;width:94%;max-width:600px;padding:1.25rem;border:1px solid var(--bdr);max-height:90vh;overflow-y:auto}
+.modal-sm{max-width:420px}.m-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem}
+.fg{margin-bottom:.75rem}.fg label{display:block;font-size:.82rem;font-weight:700;margin-bottom:.25rem}
+.inp,.sel{width:100%;padding:.55rem .8rem;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--txt);font-size:.88rem}
+.err{display:none;background:rgba(239,68,68,.15);border:1px solid var(--lose);color:var(--lose);padding:.45rem .7rem;border-radius:8px;font-size:.8rem;margin-bottom:.75rem}
+.togs{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin-bottom:.7rem}
+.tog{border:1px solid var(--bdr);background:var(--bg);border-radius:9px;padding:.5rem;text-align:center;cursor:pointer;font-size:.76rem;font-weight:700}
+.tog.a-alp{border-color:var(--alp);background:rgba(249,115,22,.15)}.tog.a-gam{border-color:var(--gam);background:rgba(6,182,212,.15)}
+.tog.a-sa{border-color:var(--sa);background:rgba(34,197,94,.15)}.tog.a-pur{border-color:#8b5cf6;background:rgba(139,92,246,.15)}
+.wisp-box,.fus-box{display:none;background:var(--bg);border:1px solid var(--gam);border-radius:10px;padding:.6rem;margin-bottom:.75rem}
+.fus-box{border-color:#8b5cf6}.wisp-box.show,.fus-box.show{display:block}
+.w-btns{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.4rem}
+.mbtn{padding:.35rem .65rem;border:1px solid var(--bdr);border-radius:7px;background:var(--card);color:var(--txt);cursor:pointer;font-size:.76rem;font-weight:600}
+.mbtn.act{background:var(--acc);color:#fff;border-color:var(--acc)}
+.frow{display:grid;grid-template-columns:2fr 1fr;gap:.5rem;margin-bottom:.7rem}
+.llist{max-height:250px;overflow-y:auto;display:flex;flex-direction:column;gap:.4rem}
+.lrow{display:flex;justify-content:space-between;align-items:center;padding:.55rem .75rem;border:1px solid var(--bdr);border-radius:8px;cursor:pointer;font-size:.86rem}
+.lrow:hover{border-color:var(--acc)}
+footer{background:var(--card);border-top:1px solid var(--bdr);padding:1.25rem;text-align:center;color:var(--mut);font-size:.82rem;margin-top:2rem}
+@media(max-width:768px){.grid2,.tc-sides,.tc-grid{grid-template-columns:1fr}.togs{grid-template-columns:repeat(2,1fr)}.frow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <a href="#" class="logo">Loomi<span>Values</span></a>
+  <nav>
+    <a href="#calc">Calculator</a>
+    <a href="#tc">Trade Center</a>
+    <div id="authNav"></div>
+    <button type="button" class="btn btn-out" id="themeBtn">Dark Mode</button>
+  </nav>
+</header>
+
+<div class="wrap">
+  <div class="banner">
+    <div><span class="badge">Live WFL + Trade Center</span> <strong>Non-Soft-Reset Gleam Roaming = 1.00 GR</strong> (50 Gammas) • Custom Novadeaus Fusion</div>
+    <span id="cnt" style="color:var(--acc);font-weight:700;font-size:.85rem"></span>
+  </div>
+
+  <section id="calc">
+    <div class="center">
+      <h1>Loomian Legacy W/F/L Calculator</h1>
+      <p>Click any slot to pick a Loomian, toggle Alpha/Gamma/SA/Pure/Wisp, or customize Novadeaus fusion.</p>
+      <div style="margin-top:.6rem">
+        <button type="button" class="mbtn act" id="uGR" onclick="setUnit('GR')">Display in GR</button>
+        <button type="button" class="mbtn" id="uGam" onclick="setUnit('Gamma')">Display in Gammas (1 GR = 50g)</button>
+      </div>
+    </div>
+
+    <div class="wfl-box">
+      <div class="wfl-res" id="wflRes">Add Loomians to Calculate Trade</div>
+      <div class="track"><div class="bar-y" id="bY"></div><div class="bar-t" id="bT"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:.88rem;font-weight:700">
+        <span>Your Offer: <span id="yTot">0.00 GR</span></span>
+        <span>Diff: <span id="dTot">0.00 GR</span></span>
+        <span>Looking For: <span id="tTot">0.00 GR</span></span>
+      </div>
+      <div class="post-row">
+        <span id="postMsg" style="font-size:.82rem;color:var(--mut)"></span>
+        <button type="button" class="btn btn-win" onclick="clickPost()">+ Post Trade to Trade Center</button>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="box">
+        <div class="box-hd"><h3>Your Offer (Trading)</h3><button type="button" class="mbtn" onclick="clr('you')">Clear</button></div>
+        <div class="slots" id="youSlots"></div>
+      </div>
+      <div class="box">
+        <div class="box-hd"><h3>Their Offer (Looking For)</h3><button type="button" class="mbtn" onclick="clr('them')">Clear</button></div>
+        <div class="slots" id="themSlots"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tc">
+    <div class="tc-hd">
+      <div>
+        <h2>Trade Center — Recent Listings</h2>
+        <p style="color:var(--mut);font-size:.85rem">Account required to post or send offers (Roblox username optional, recommended).</p>
+      </div>
+      <div style="display:flex;gap:.45rem;align-items:center;flex-wrap:wrap">
+        <input type="text" class="inp" id="tcQ" placeholder="Search trader or Loomian..." oninput="renderTC()" style="width:220px">
+        <button type="button" class="mbtn act" data-tf="ALL" onclick="setTF(this,'ALL')">All</button>
+        <button type="button" class="mbtn" data-tf="FAIR" onclick="setTF(this,'FAIR')">Fair / Win</button>
+        <button type="button" class="mbtn" onclick="fetchTC()" title="Refresh listings">↻ Refresh</button>
+      </div>
+    </div>
+    <div class="tc-grid" id="tcGrid"></div>
+  </section>
+</div>
+
+<footer>LoomiValues — Loomian Legacy Value Calculator &amp; Trade Center (Discord &amp; Fandom GR Standards). Not affiliated with Llama Train Studio.</footer>
+
+<div class="modal-bg" id="authMod" onclick="if(event.target===this)closeAuth()">
+  <div class="modal modal-sm">
+    <div class="m-hd"><h3 id="aTitle">Account Required</h3><button type="button" class="mbtn" onclick="closeAuth()">✕</button></div>
+    <p style="color:var(--mut);font-size:.84rem;margin-bottom:.8rem">Sign in or create an account to trade. New usernames create an account automatically.</p>
+    <div class="err" id="aErr"></div>
+    <div class="fg"><label for="aUser">Account Username *</label><input type="text" class="inp" id="aUser" autocomplete="username" maxlength="24"></div>
+    <div class="fg" id="pwGrp"><label for="aPass">Password *</label><input type="password" class="inp" id="aPass" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAuth()"></div>
+    <div class="fg"><label for="aRbx">Roblox Username (Optional — Recommended)</label><input type="text" class="inp" id="aRbx" placeholder="@YourRobloxName" maxlength="40"></div>
+    <div style="display:flex;justify-content:space-between;gap:.5rem">
+      <button type="button" class="btn btn-lose" id="outBtn" onclick="doLogout()">Sign Out</button>
+      <button type="button" class="btn" id="aSave" onclick="doAuth()" style="margin-left:auto">Save / Continue</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="pickMod" onclick="if(event.target===this)closePick()">
+  <div class="modal">
+    <div class="m-hd"><h3>Select Loomian &amp; Modifiers</h3><button type="button" class="mbtn" onclick="closePick()">✕</button></div>
+    <div class="togs">
+      <div class="tog" id="tAlp" onclick="tog('alpha')">Alpha (Gleam)</div>
+      <div class="tog" id="tGam" onclick="tog('gamma')">Gamma</div>
+      <div class="tog" id="tSA" onclick="tog('sa')">Secret Ability</div>
+      <div class="tog" id="tPur" onclick="tog('pure')">Pure Nature</div>
+    </div>
+    <div class="wisp-box" id="wBox">
+      <div style="font-size:.72rem;font-weight:800;color:var(--gam)">GAMMA WISP COLOR MODIFIER</div>
+      <div class="w-btns">
+        <button type="button" class="mbtn act" data-w="default" onclick="setWisp('default')">Default (1.0x)</button>
+        <button type="button" class="mbtn" data-w="matching" onclick="setWisp('matching')">Matching (1.1x)</button>
+        <button type="button" class="mbtn" data-w="pinkblue" onclick="setWisp('pinkblue')">Pink/Sky (1.2x)</button>
+        <button type="button" class="mbtn" data-w="white" onclick="setWisp('white')">Pure White (1.35x)</button>
+        <button type="button" class="mbtn" data-w="rainbow" onclick="setWisp('rainbow')">Rainbow Wisp (1.6x)</button>
+      </div>
+    </div>
+    <div class="fus-box" id="fBox">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+        <strong>Novadeaus Fusion (Arceros + Glacadia)</strong>
+        <button type="button" class="mbtn" onclick="closeFus()">← Back</button>
+      </div>
+      <div style="font-size:.78rem;font-weight:700;margin-top:.3rem">Arceros Component</div>
+      <div class="w-btns" id="arcBtns">
+        <button type="button" class="mbtn act" data-c="normal" onclick="setFus('arceros','normal')">Normal (0.002 GR)</button>
+        <button type="button" class="mbtn" data-c="alpha" onclick="setFus('arceros','alpha')">Alpha (0.07 GR)</button>
+        <button type="button" class="mbtn" data-c="gamma" onclick="setFus('arceros','gamma')">Gamma (3.80 GR)</button>
+        <button type="button" class="mbtn" data-c="rainbow" onclick="setFus('arceros','rainbow')">Rainbow (12.00 GR)</button>
+      </div>
+      <div style="font-size:.78rem;font-weight:700;margin-top:.6rem">Glacadia Component</div>
+      <div class="w-btns" id="glaBtns">
+        <button type="button" class="mbtn act" data-c="normal" onclick="setFus('glacadia','normal')">Normal (0.002 GR)</button>
+        <button type="button" class="mbtn" data-c="alpha" onclick="setFus('glacadia','alpha')">Alpha (0.07 GR)</button>
+        <button type="button" class="mbtn" data-c="gamma" onclick="setFus('glacadia','gamma')">Gamma (3.80 GR)</button>
+        <button type="button" class="mbtn" data-c="rainbow" onclick="setFus('glacadia','rainbow')">Rainbow (12.00 GR)</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.8rem;padding-top:.6rem;border-top:1px solid var(--bdr)">
+        <strong id="fVal" style="color:var(--acc)">0.004 GR</strong>
+        <button type="button" class="btn btn-win" onclick="addNova()">Add Novadeaus</button>
+      </div>
+    </div>
+    <div id="bArea">
+      <div class="frow">
+        <input type="text" class="inp" id="qIn" placeholder="Search Loomians..." oninput="renderList()">
+        <select class="sel" id="cSel" onchange="renderList()">
+          <option value="ALL">All Categories</option>
+          <option value="Currency">Currency &amp; Shards</option>
+          <option value="Starter">Starters</option>
+          <option value="Common">Wild / Route</option>
+          <option value="Route Rare">Route Rares</option>
+          <option value="Petrolith">Petroliths</option>
+          <option value="Roaming">Roamings (1.00 GR)</option>
+          <option value="Soft-Reset">Soft-Reset Roamings</option>
+          <option value="Fusion">Fusion (Novadeaus)</option>
+          <option value="Event">Events</option>
+          <option value="Event Roaming">Event Roamings</option>
+        </select>
+      </div>
+      <div class="llist" id="lList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WISPS={default:{m:1,l:null,c:""},matching:{m:1.1,l:"Match Wisp",c:"p-wm"},pinkblue:{m:1.2,l:"Pink/Sky",c:"p-wp"},white:{m:1.35,l:"White Wisp",c:"p-ww"},rainbow:{m:1.6,l:"Rainbow Wisp",c:"p-rw"}};
+const FUS={normal:{v:.002,l:"Normal",c:"p-nrm"},alpha:{v:.07,l:"Alpha",c:"p-alp"},gamma:{v:3.8,l:"Gamma",c:"p-gam"},rainbow:{v:12,l:"Rainbow",c:"p-rw"}};
+const TIERS={
+"Currency":{n:.02,a:.02,g:.02,sa:.02,gsa:.02,ggsa:.02,p:0,d:"High"},
+"AlphaCur":{n:.002,a:.002,g:.002,sa:.002,gsa:.002,ggsa:.002,p:0,d:"Medium"},
+"Shard":{n:.004,a:.004,g:.004,sa:.004,gsa:.004,ggsa:.004,p:0,d:"High"},
+"Common":{n:.0005,a:.002,g:.08,sa:.002,gsa:.05,ggsa:.45,p:.01,d:"Low"},
+"Route Rare":{n:.002,a:.01,g:.65,sa:.01,gsa:.22,ggsa:3,p:.03,d:"High"},
+"Starter":{n:.002,a:.02,g:1,sa:.02,gsa:.3,ggsa:4.5,p:.04,d:"High"},
+"Petrolith":{n:.004,a:.03,g:1.4,sa:.03,gsa:.45,ggsa:6.5,p:.05,d:"High"},
+"Roaming":{n:.004,a:1,g:10,sa:.08,gsa:2.5,ggsa:25,p:.2,d:"High"},
+"Soft-Reset":{n:.002,a:.07,g:3.8,sa:.03,gsa:.35,ggsa:11,p:.05,d:"Low (HTT)"},
+"Fusion":{n:.004,a:.14,g:7.6,sa:.06,gsa:.7,ggsa:22,p:.1,d:"Very High"},
+"Event":{n:.01,a:.12,g:2.5,sa:.04,gsa:.6,ggsa:8.5,p:.08,d:"High"},
+"Event Roaming":{n:.02,a:1.25,g:12.5,sa:.15,gsa:3,ggsa:28,p:.25,d:"Very High"}
+};
+const OVER={
+"Protogon":{a:1.4,g:14,gsa:3.2,ggsa:30,p:.25,d:"Very High"},"Metronette":{a:1.5,g:15,gsa:3.5,ggsa:32,p:.25,d:"Very High"},
+"Nevermare":{a:1.3,g:13,gsa:3,ggsa:28,p:.2,d:"High"},"Santa Ragoon":{a:9,g:40,gsa:14,ggsa:65,p:.5,d:"Very High"},
+"Halloween Shawchi":{a:.25,g:6.5,gsa:1.2,ggsa:16,p:.15,d:"Very High"},"Rainbow Vari":{a:.4,g:8,gsa:1.5,ggsa:18,p:.15,d:"Medium"},
+"Pyramind":{a:.15,g:3.2,gsa:.75,ggsa:9.5,p:.1,d:"High"},"Pharo":{a:.18,g:3.5,gsa:.85,ggsa:10.5,p:.12,d:"High"}
+};
+const GROUPS={
+  "Starter":["Embit","Rabburn","Searknight","Dripple","Reptide","Luminami","Fevine","Felver","Tahtab","Eaglit","Torprey","Falkyrie","Vambat","Dimpire","Vesperatu","Snocub","Snowki","Himbrr","Weevolt","Stozap","Zuelong"],
+  "Common":["Twilat","Umbrat","Luxoar","Tiklipse","Cathorn","Propae","Cynamoth","Sumobito","Twittle","Paratweet","Avitross","Pyder","Swolder","Antsee","Florant","Grubby","Coonucopia","Terrafly","Terraclaw","Kleptyke","Ragoon","Babore","Boarrok","Geklow","Eleguana","Slugling","Escargrow","Gastroak","Kabunga","Wiki-Wiki","Chartiki","Shawchi","Rakrawla","Sedimars","Gumpod","Ventacean","Phancub","Ursoul","Festifir","Whispup","Revenine","Skilava","Geksplode","Eruptidon","Craytal","Krakaloa","Volkaloa","Igneol","Chrysite","Obsidrugon","Cafnote","Trumbull","Mootune","Gobbidemic","Icigool","Chompactor","Munchweel","Goppie","Arapaigo","Poochrol","Hunder","Ampole","Medikrow","Stratusoar","Operaptor","Concredon","Tyrecks","Wiledile","Mawamurk","Teripod","Fentern","Scorb","Veylens","Gardrone","Skampi","Prawnsu","Burroach","Garbantis","Whimpor","Pipsee","Dandylion","Whippledriff","Territi","Dyeborg","Kittone","Twinkaton","Singeel","Hoganosh","Swimp","Snapr","Garlash","Odasho","Spreezy","Bloatox","Venolen","Hydrini","Bezeldew","Deludrix","Lumello","Lumica","Sharpod","Samamarine","Kanki","Kanakobo","Lissen","Tundrolen","Mistlebud","Hoar","Nymesis","Clionae","Barblast","Mimask","Harvesect","Snailey","Copling","Oxidrake","Cupoink","Banooh","Mochibi","Toximochi","Totemochi","Kayute","Dractus","Saguaro","Boonary","Snifflin","Tadplade","Nitrode","Wulen","Fenrain","Snugwin","Pangard","Frigidest","Spellpup","Sigleo","Berscerus","Snicle","Slivice","Kumiro","Vixumi","Volops"],
+  "Route Rare":["Vari","Kirolen","Cervolen","Wendolen","Campylen","Buzzolen","Wresolen","Zepholen","Thundrolen","Pyrolen","Hydrolen","Pyramind","Pharo","Gwurm","Spritely","Mirrami","Mirraith","Samarine","Taoshi","Taoshinu"],
+  "Petrolith":["Dobo","Infernix","Kyogo","Dorogo","Zaleo","Joltooth","Colozoss","Colossotrops","Ceratot","Bambolin"],
+  "Roaming":["Duskit","Ikazune","Protogon","Cosmeleon","Dakuda","Phagenaut"],
+  "Soft-Reset":["Mutagon","Cephalops","Akhalos","Waba","Arceros","Glacadia","Elephage"],
+  "Fusion":["Novadeaus"],
+  "Event":["Halloween Shawchi","Halloween Slugling","Scarecrow Kabunga","Santa Ragoon","Santa Propae","Festive Icigool","Snowl","Wintrix","Bronze Geklow","Silver Geklow","Gold Geklow","Emerald Geklow","Ruby Geklow","Sapphire Geklow","Rainbow Vari","Rainbow Shawchi","Rainbow Twilat","Cupoink (Valentines)","Kyeggo","Doreggo","Bunpuff","Bunnecki","Swirelle","Impling"],
+  "Event Roaming":["Metronette","Nevermare","Gargolem","Nymaurae","Celesting","Jellusa","Xmas Mutagon","Xmas Ikazune","Xmas Protogon","Xmas Metronette","Xmas Nevermare","HW Duskit","HW Ikazune","HW Protogon","HW Cephalops"]
+};
+const DB=[
+  {name:"1 Raw Gamma (Currency)",category:"Currency",...TIERS.Currency},
+  {name:"1 Alpha / Gleam (Currency)",category:"Currency",...TIERS.AlphaCur},
+  {name:"Stat Shard",category:"Currency",...TIERS.Shard}
+];
+const seen=new Set();
+Object.entries(GROUPS).forEach(([cat,arr])=>arr.forEach(nm=>{
+  if(seen.has(nm.toLowerCase()))return;seen.add(nm.toLowerCase());
+  DB.push({name:nm,category:cat,...TIERS[cat],...(OVER[nm]||{})});
+}));
+document.getElementById('cnt').textContent=`${DB.length} Loomians Loaded`;
+
+const load=(k,f)=>{try{const r=localStorage.getItem(k);return r?JSON.parse(r):f}catch(e){return f}};
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const S={you:Array(9).fill(null),them:Array(9).fill(null),side:null,idx:null,alpha:false,gamma:false,sa:false,pure:false,wisp:"default",unit:"GR",fus:{arceros:"normal",glacadia:"normal"},tc:[],tcLoading:true,tcErr:'',tf:"ALL",user:load('lv_user',null),token:localStorage.getItem('lv_token'),pend:null};
+async function api(path,opt={}){
+  const h={'Content-Type':'application/json'};if(S.token)h.Authorization='Bearer '+S.token;
+  const r=await fetch('/api/'+path,{...opt,headers:h,body:opt.body?JSON.stringify(opt.body):undefined});
+  const d=await r.json().catch(()=>({error:'Unexpected server response.'}));
+  if(r.status===401&&path!=='auth'){S.user=null;S.token=null;localStorage.removeItem('lv_user');localStorage.removeItem('lv_token');renderAuth();}
+  if(!r.ok)throw new Error(d.error||'Request failed.');
+  return d;
+}
+const ago=t=>{const s=Math.max(0,(Date.now()-new Date(t).getTime())/1000);if(s<60)return'Just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';};
+async function fetchTC(){
+  try{S.tc=await api('trades');S.tcErr='';}catch(e){S.tcErr=e.message;}
+  S.tcLoading=false;renderTC();
+}
+const fmt=v=>{
+  if(S.unit==="Gamma"){const g=v*50;return g>=1?`${g.toFixed(1)} Gammas`:`${(g*10).toFixed(1)} Alphas`}
+  return(v>0&&v<.02)?`${(v*50).toFixed(2)}g (${v.toFixed(3)} GR)`:`${v.toFixed(2)} GR`;
+};
+function setUnit(u){S.unit=u;document.getElementById('uGR').classList.toggle('act',u==='GR');document.getElementById('uGam').classList.toggle('act',u==='Gamma');renderSlots();renderTC();updFus();}
+function renderAuth(){
+  const nav=document.getElementById('authNav'),msg=document.getElementById('postMsg');
+  if(S.user){
+    const rb=S.user.robloxUser?`<span class="rbx-ok">Roblox: @${esc(S.user.robloxUser)}</span>`:`<span class="rbx-no">No Roblox Linked</span>`;
+    nav.innerHTML=`<div class="acc-pill"><span>${esc(S.user.username)}</span>${rb}<button type="button" class="mbtn" style="padding:2px 6px" onclick="openAuth('edit')">Edit</button></div>`;
+    msg.innerHTML=`Signed in as <strong>${esc(S.user.username)}</strong> ${S.user.robloxUser?`(@${esc(S.user.robloxUser)})`:'(Optional: link Roblox user in Edit)'}`;
+  }else{
+    nav.innerHTML=`<button type="button" class="btn" onclick="openAuth('login')">Sign In / Create Account</button>`;
+    msg.innerHTML=`<strong>Account required</strong> to post trades (Roblox username optional, recommended).`;
+  }
+}
+function openAuth(mode){
+  document.getElementById('aErr').style.display='none';
+  const ed=mode==='edit'&&S.user;
+  document.getElementById('aTitle').textContent=ed?'Account Settings':'Account Required';
+  document.getElementById('aUser').value=ed?S.user.username:'';
+  document.getElementById('aUser').disabled=!!ed;
+  document.getElementById('pwGrp').style.display=ed?'none':'block';
+  document.getElementById('aPass').value='';
+  document.getElementById('aRbx').value=ed?(S.user.robloxUser||''):'';
+  document.getElementById('outBtn').style.display=ed?'inline-block':'none';
+  document.getElementById('authMod').style.display='flex';
+  setTimeout(()=>document.getElementById(ed?'aRbx':'aUser').focus(),0);
+}
+const closeAuth=()=>{document.getElementById('authMod').style.display='none';};
+function saveSession(user,token){
+  S.user=user;localStorage.setItem('lv_user',JSON.stringify(user));
+  if(token){S.token=token;localStorage.setItem('lv_token',token);}
+}
+async function doAuth(){
+  const err=document.getElementById('aErr'),btn=document.getElementById('aSave'),u=document.getElementById('aUser').value.trim(),rbx=document.getElementById('aRbx').value.trim().replace(/^@/,'');
+  const showErr=m=>{err.textContent=m;err.style.display='block';};
+  err.style.display='none';
+  const editing=S.user&&document.getElementById('aUser').disabled;
+  const pw=document.getElementById('aPass').value;
+  if(!editing){
+    if(u.length<3)return showErr('Username must be at least 3 characters.');
+    if(pw.length<4)return showErr('Password must be at least 4 characters.');
+  }
+  btn.disabled=true;btn.textContent='Please wait...';
+  try{
+    if(editing){saveSession(await api('me',{method:'PATCH',body:{robloxUser:rbx}}));}
+    else{const d=await api('auth',{method:'POST',body:{username:u,password:pw,robloxUser:rbx}});saveSession(d.user,d.token);}
+  }catch(e){showErr(e.message);return;}
+  finally{btn.disabled=false;btn.textContent='Save / Continue';}
+  closeAuth();renderAuth();await fetchTC();
+  if(S.pend==='post'){S.pend=null;execPost();}else if(typeof S.pend==='number'){const id=S.pend;S.pend=null;sendOffer(id);}
+}
+async function doLogout(){
+  try{await api('logout',{method:'POST'});}catch(e){}
+  S.user=null;S.token=null;localStorage.removeItem('lv_user');localStorage.removeItem('lv_token');closeAuth();renderAuth();renderTC();
+}
+function tog(k){
+  if(k==='alpha'){S.alpha=!S.alpha;if(S.alpha){S.gamma=false;S.wisp='default';}}
+  else if(k==='gamma'){S.gamma=!S.gamma;if(S.gamma)S.alpha=false;else S.wisp='default';}
+  else S[k]=!S[k];
+  updUI();renderList();updFus();
+}
+function setWisp(w){S.wisp=w;updUI();renderList();updFus();}
+function updUI(){
+  document.getElementById('tAlp').classList.toggle('a-alp',S.alpha);
+  document.getElementById('tGam').classList.toggle('a-gam',S.gamma);
+  document.getElementById('tSA').classList.toggle('a-sa',S.sa);
+  document.getElementById('tPur').classList.toggle('a-pur',S.pure);
+  const fVis=document.getElementById('fBox').classList.contains('show');
+  document.getElementById('wBox').classList.toggle('show',S.gamma||(fVis&&(S.fus.arceros==='gamma'||S.fus.glacadia==='gamma')));
+  document.querySelectorAll('#wBox .mbtn').forEach(b=>b.classList.toggle('act',b.dataset.w===S.wisp));
+}
+function openFus(){document.getElementById('bArea').style.display='none';document.getElementById('fBox').classList.add('show');updUI();updFus();}
+function closeFus(){document.getElementById('fBox').classList.remove('show');document.getElementById('bArea').style.display='block';updUI();}
+function setFus(d,t){
+  S.fus[d]=t;
+  document.querySelectorAll(`#${d==='arceros'?'arcBtns':'glaBtns'} .mbtn`).forEach(b=>b.classList.toggle('act',b.dataset.c===t));
+  updUI();updFus();
+}
+function fusVal(){
+  let av=FUS[S.fus.arceros].v,gv=FUS[S.fus.glacadia].v;
+  if(S.fus.arceros==='gamma')av*=WISPS[S.wisp].m;
+  if(S.fus.glacadia==='gamma')gv*=WISPS[S.wisp].m;
+  return av+gv+(S.sa?.25:0)+(S.pure?.15:0);
+}
+const updFus=()=>document.getElementById('fVal').textContent=fmt(fusVal());
+function addNova(){
+  const a=FUS[S.fus.arceros],g=FUS[S.fus.glacadia],bg=[{t:`Arc: ${a.l}`,c:a.c},{t:`Gla: ${g.l}`,c:g.c}];
+  if((S.fus.arceros==='gamma'||S.fus.glacadia==='gamma')&&WISPS[S.wisp].l)bg.push({t:WISPS[S.wisp].l,c:WISPS[S.wisp].c});
+  if(S.sa)bg.push({t:'SA',c:'p-sa'});if(S.pure)bg.push({t:'Pure',c:'p-pur'});
+  S[S.side][S.idx]={name:"Novadeaus (Fusion)",badges:bg,v:fusVal()};
+  closeFus();closePick();renderSlots();
+}
+
+function compVal(it){
+  let v=it.n;
+  if(S.gamma&&S.sa)v=it.ggsa;else if(S.alpha&&S.sa)v=it.gsa;else if(S.gamma)v=it.g;else if(S.alpha)v=it.a;else if(S.sa)v=it.sa;
+  if(S.gamma&&it.category!=="Currency")v*=WISPS[S.wisp].m;
+  if(S.pure&&(S.alpha||S.gamma||S.sa))v+=it.p;
+  return v;
+}
+function renderSlots(){
+  ['you','them'].forEach(sd=>{
+    const el=document.getElementById(sd+'Slots');el.innerHTML='';
+    S[sd].forEach((it,i)=>{
+      const d=document.createElement('div');d.className='slot'+(it?' filled':'');
+      if(it){
+        d.innerHTML=`<button type="button" class="rm" onclick="rmSlot(event,'${sd}',${i})">×</button><div class="s-title">${esc(it.name)}</div><div class="s-tags">${it.badges.map(b=>`<span class="pill ${esc(b.c)}">${esc(b.t)}</span>`).join('')}</div><div class="s-val">${fmt(it.v)}</div>`;
+      }else d.innerHTML=`<span style="font-size:1.3rem;color:var(--mut)">+</span><span style="font-size:.72rem;color:var(--mut)">Add</span>`;
+      d.onclick=()=>{S.side=sd;S.idx=i;closeFus();document.getElementById('pickMod').style.display='flex';document.getElementById('qIn').value='';updUI();renderList();};
+      el.appendChild(d);
+    });
+  });
+  calc();
+}
+const closePick=()=>document.getElementById('pickMod').style.display='none';
+function rmSlot(e,sd,i){e.stopPropagation();S[sd][i]=null;renderSlots();}
+function clr(sd){S[sd]=Array(9).fill(null);renderSlots();}
+
+function renderList(){
+  const q=document.getElementById('qIn').value.toLowerCase(),c=document.getElementById('cSel').value,el=document.getElementById('lList');
+  el.innerHTML='';
+  DB.filter(l=>(l.name.toLowerCase().includes(q)||l.category.toLowerCase().includes(q))&&(c==='ALL'||l.category===c)).forEach(l=>{
+    const nova=l.name==="Novadeaus",v=compVal(l),r=document.createElement('div');r.className='lrow';
+    r.innerHTML=`<div><strong>${l.name}</strong><div style="font-size:.74rem;color:var(--mut)">${l.category} • ${nova?'Click to Customize Fusion':'Demand: '+l.d}</div></div><strong style="color:var(--acc)">${nova?'Customize →':fmt(v)}</strong>`;
+    r.onclick=()=>{
+      if(nova){openFus();return;}
+      const bg=[];
+      if(S.gamma){bg.push({t:'Gamma',c:'p-gam'});if(WISPS[S.wisp].l&&l.category!=="Currency")bg.push({t:WISPS[S.wisp].l,c:WISPS[S.wisp].c});}
+      else if(S.alpha)bg.push({t:'Alpha',c:'p-alp'});
+      if(S.sa)bg.push({t:'SA',c:'p-sa'});if(S.pure)bg.push({t:'Pure',c:'p-pur'});
+      if(!bg.length)bg.push({t:'Normal',c:'p-nrm'});
+      S[S.side][S.idx]={name:l.name,badges:bg,v};closePick();renderSlots();
+    };
+    el.appendChild(r);
+  });
+}
+
+function calc(){
+  const ys=S.you.reduce((a,b)=>a+(b?b.v:0),0),ts=S.them.reduce((a,b)=>a+(b?b.v:0),0),df=ts-ys,tot=ys+ts;
+  document.getElementById('yTot').textContent=fmt(ys);document.getElementById('tTot').textContent=fmt(ts);
+  document.getElementById('dTot').textContent=(df>0?'+':'')+fmt(df);
+  const res=document.getElementById('wflRes');
+  if(!tot){res.textContent='Add Loomians to Calculate Trade';res.style.color='var(--txt)';document.getElementById('bY').style.width='50%';document.getElementById('bT').style.width='50%';return;}
+  document.getElementById('bY').style.width=(ys/tot*100)+'%';document.getElementById('bT').style.width=(ts/tot*100)+'%';
+  const r=ys===0?2:ts/ys;
+  if(r>1.07){res.textContent='WIN (W)';res.style.color='var(--win)';}
+  else if(r<.93){res.textContent='LOSE (L)';res.style.color='var(--lose)';}
+  else{res.textContent='FAIR (F)';res.style.color='var(--fair)';}
+}
+
+function clickPost(){
+  if(!S.you.some(Boolean)||!S.them.some(Boolean)){alert("Add at least one Loomian to both sides first!");return;}
+  if(!S.user){S.pend='post';openAuth('login');return;}
+  execPost();
+}
+async function execPost(){
+  try{
+    S.tc=await api('trades',{method:'POST',body:{off:S.you.filter(Boolean),want:S.them.filter(Boolean)}});
+    renderTC();document.getElementById('tc').scrollIntoView({behavior:'smooth'});
+  }catch(e){if(!S.user){S.pend='post';openAuth('login');}else alert(e.message);}
+}
+async function sendOffer(id){
+  if(!S.user){S.pend=id;openAuth('login');return;}
+  try{
+    const d=await api(`trades/${id}/offer`,{method:'POST'});S.tc=d.trades;renderTC();
+    alert((d.already?`You already sent an offer on this trade, ${S.user.username}.\n`:`Offer sent as ${S.user.username}!\n`)+(d.robloxUser?`Join @${d.robloxUser} in Trade Resort!`:`Trader has no Roblox username linked yet.`));
+  }catch(e){if(!S.user){S.pend=id;openAuth('login');}else alert(e.message);}
+}
+async function delTC(id){
+  if(!confirm('Delete this trade listing?'))return;
+  try{S.tc=await api(`trades/${id}`,{method:'DELETE'});renderTC();}catch(e){alert(e.message);}
+}
+function loadTC(id){
+  const l=S.tc.find(x=>x.id===id);if(!l)return;
+  S.you=Array(9).fill(null);S.them=Array(9).fill(null);
+  l.off.slice(0,9).forEach((x,i)=>S.you[i]=JSON.parse(JSON.stringify(x)));
+  l.want.slice(0,9).forEach((x,i)=>S.them[i]=JSON.parse(JSON.stringify(x)));
+  renderSlots();document.getElementById('calc').scrollIntoView({behavior:'smooth'});
+}
+function setTF(b,f){S.tf=f;document.querySelectorAll('[data-tf]').forEach(x=>x.classList.remove('act'));b.classList.add('act');renderTC();}
+function renderTC(){
+  const q=document.getElementById('tcQ').value.toLowerCase(),g=document.getElementById('tcGrid');g.innerHTML='';
+  const note=t=>{g.innerHTML=`<div class="tc-card" style="grid-column:1/-1;text-align:center;color:var(--mut)">${t}</div>`;};
+  if(S.tcLoading)return note('Loading trades...');
+  if(S.tcErr&&!S.tc.length)return note(`Could not load trades: ${esc(S.tcErr)}`);
+  const list=S.tc.filter(l=>{
+    const os=l.off.reduce((a,b)=>a+b.v,0),ws=l.want.reduce((a,b)=>a+b.v,0);
+    if(S.tf==='FAIR'&&(ws===0?1:os/ws)<.93)return false;
+    return !q||[l.trader,l.robloxUser||'',...l.off.map(i=>i.name),...l.want.map(i=>i.name)].join(' ').toLowerCase().includes(q);
+  });
+  if(!list.length)return note(S.tc.length?'No matching trades found.':'No trades posted yet — be the first! Build a trade above and click “Post Trade”.');
+  list.forEach(l=>{
+    const os=l.off.reduce((a,b)=>a+b.v,0),ws=l.want.reduce((a,b)=>a+b.v,0);
+    const own=S.user&&S.user.username.toLowerCase()===l.trader.toLowerCase();
+    const rb=l.robloxUser?`<span class="rbx-ok">Roblox: @${esc(l.robloxUser)}</span>`:`<span class="rbx-no">No Roblox</span>`;
+    const mini=arr=>arr.map(i=>`<div class="tc-item"><strong>${esc(i.name)}</strong> <span style="color:var(--mut)">${fmt(i.v)}</span><div>${i.badges.map(b=>`<span class="pill ${esc(b.c)}">${esc(b.t)}</span>`).join(' ')}</div></div>`).join('');
+    const c=document.createElement('div');c.className='tc-card';
+    c.innerHTML=`<div class="tc-top"><div><strong style="color:var(--acc)">${esc(l.trader)}</strong> ${rb}</div><span style="color:var(--mut)">${ago(l.createdAt)}</span></div>
+    <div class="tc-sides"><div class="tc-side"><div class="tc-lbl"><span>Offering</span><span>${fmt(os)}</span></div>${mini(l.off)}</div><div class="tc-side"><div class="tc-lbl"><span>Looking For</span><span>${fmt(ws)}</span></div>${mini(l.want)}</div></div>
+    <div class="tc-ft"><span style="color:var(--mut);font-weight:700">Diff: ${(os-ws>=0?'+':'')+fmt(os-ws)}</span><div style="display:flex;gap:.4rem"><button type="button" class="btn btn-out" onclick="loadTC(${l.id})">Check WFL</button>${own?`<button type="button" class="btn btn-lose" onclick="delTC(${l.id})">Delete (${l.offers||0} offers)</button>`:`<button type="button" class="btn btn-win" onclick="sendOffer(${l.id})">Offer (${l.offers||0})</button>`}</div></div>`;
+    g.appendChild(c);
+  });
+}
+
+document.getElementById('themeBtn').onclick=function(){
+  const dk=document.body.getAttribute('data-theme')==='dark';
+  document.body.setAttribute('data-theme',dk?'light':'dark');this.textContent=dk?'Dark Mode':'Light Mode';
+};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAuth();closePick();}});
+renderAuth();renderSlots();renderTC();fetchTC();
+if(S.token)api('me').then(u=>{saveSession(u);renderAuth();renderTC();}).catch(()=>{});
+setInterval(()=>{if(!document.hidden)fetchTC();},30000);
+</script>
+</body>
+</html>
